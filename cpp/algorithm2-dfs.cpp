@@ -7,40 +7,46 @@ using namespace std;
 
 map<string, vector<pair<string, int>>> graph;
 map<string, int> net;
-set<string> visited;
 int settlement_count = 0;
 
-// DFS to find and settle debts
-void dfs(string person, int amount_to_settle, vector<string>& path) {
-    if (amount_to_settle == 0) return;
+// Recursive DFS to find payment paths and settle debts
+// person: current debtor trying to settle
+// visited: set of people already visited in this DFS path
+void dfs(string person, set<string>& visited) {
+    // Base case: this person is fully settled
+    if (net[person] == 0) return;
     
+    // Mark as visited to avoid cycles
     visited.insert(person);
-    path.push_back(person);
-
-    // Try to settle with neighbors
+    
+    // Try to settle with each neighbor (creditor)
     for (auto& edge : graph[person]) {
-        string neighbor = edge.first;
+        string creditor = edge.first;
         
-        if (visited.find(neighbor) == visited.end() && 
-            net[neighbor] > 0 && net[person] < 0) {
+        // Only settle with unvisited creditors who are owed money
+        if (visited.find(creditor) == visited.end() && net[creditor] > 0) {
             
-            int settlement_amount = min(-net[person], net[neighbor]);
+            // Calculate settlement amount (min of what debtor owes and creditor is owed)
+            int settlement_amount = min(-net[person], net[creditor]);
             
+            // Print settlement
             cout << person << " will pay " << settlement_amount << " to " 
-                 << neighbor << endl;
+                 << creditor << endl;
             
+            // Update balances
             net[person] += settlement_amount;
-            net[neighbor] -= settlement_amount;
+            net[creditor] -= settlement_amount;
             settlement_count++;
             
-            if (net[person] != 0) {
-                dfs(neighbor, net[person], path);
+            // Recursively continue settlement if debtor still owes money
+            if (net[person] < 0) {
+                dfs(person, visited);
             }
         }
     }
     
+    // Backtrack: remove from visited for other DFS paths
     visited.erase(person);
-    path.pop_back();
 }
 
 int main(){
@@ -67,14 +73,15 @@ int main(){
         graph[y].push_back({x, amount});
     }
 
-    // DFS-based settlement
+    // DFS-based settlement: start DFS from each debtor
     for (auto& p : net) {
         string person = p.first;
         int balance = p.second;
 
-        if (balance < 0 && visited.find(person) == visited.end()) {
-            vector<string> path;
-            dfs(person, -balance, path);
+        // If person owes money and hasn't been fully settled yet
+        if (balance < 0) {
+            set<string> visited;
+            dfs(person, visited);
         }
     }
 

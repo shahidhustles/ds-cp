@@ -127,3 +127,24 @@ ds-cp/
 - **Person D:** Min-Heap Priority Queue Algorithm
 
 **Course:** Data Structures & Algorithms
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions that improve this project!
+
+### How to Contribute
+1. **Fork** this repository
+2. **Create** a new branch (`git checkout -b feature/your-feature`)
+3. **Commit** your changes (`git commit -m 'Add some feature'`)
+4. **Push** to your fork (`git push origin feature/your-feature`)
+5. **Open a Pull Request** and describe your changes
+
+### Guidelines
+- Keep code clean and well-commented
+- Respect existing architecture and naming conventions
+- Make sure your code passes all tests (if applicable)
+- Update documentation as needed
+
+Thank you for your interest in contributing!
